@@ -17,7 +17,10 @@ map <F7> :BufExplorer<cr>
 autocmd VimEnter * NERDTree
 autocmd VimEnter * wincmd p
 
-autocmd WinEnter * call s:CloseIfOnlyNerdTreeLeft()
+map <F6> :NERDTreeTabsToggle<cr>
+map Q :Bclose<cr>
+
+"autocmd WinEnter * call s:CloseIfOnlyNerdTreeLeft()
 
 " Close all open buffers on entering a window if the only
 " buffer that's left is the NERDTree buffer
@@ -31,3 +34,19 @@ function! s:CloseIfOnlyNerdTreeLeft()
   endif
 endfunction
 
+" Strip the newline from the end of a string
+function! Chomp(str)
+  return substitute(a:str, '\n$', '', '')
+endfunction
+
+" Find a file and pass it to cmd
+function! DmenuOpen(cmd)
+  let fname = Chomp(system("git ls-files | dmenu -i -l 20 -p " . a:cmd))
+  if empty(fname)
+     return
+  endif
+  execute a:cmd . " " . fname
+endfunction
+
+map <c-p> :call DmenuOpen("tabe")<cr>
+" map <c-p> :call DmenuOpen("e")<cr>
